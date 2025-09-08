@@ -13,6 +13,7 @@ def experiment_cycle(theorist, experimentalist, experiment_runner, current_state
 def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles, burn_in):
     """
     Run a workflow between a theorist and an experimentalist.
+
     """
 
     #TODO: Prepate the workflow cycle
