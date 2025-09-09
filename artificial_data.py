@@ -36,6 +36,37 @@ def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables
     return experiment, equation, variables, constants
 
 
+
+def test():
+    """
+    Test the artificial experiment runner by generating a random equation and running it on random test conditions.
+    :return: True if the test passes, False otherwise.
+    """
+    try:
+        experiment, equation, variables, constants = get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2, equation_num_constants=1)
+        num_samples = 5
+        random_data = np.random.uniform(-10, 10, size=(num_samples, len(variables)))
+        test_conditions = pd.DataFrame(random_data, columns=variables)
+        if len(constants) > 0:
+            for const in constants:
+                # set all entries on this constant to random value between -10 and 10
+                const_val = np.random.uniform(-10, 10)
+                test_conditions[const] = const_val
+        #run the experiment
+        results = experiment.run(test_conditions)
+        print("Generated Equation:", equation)
+        print("Variables:", variables)
+        print("Constants:", constants)
+        print("Test conditions:")
+        print(test_conditions)
+        print("Experiment Results:")
+        print(results)
+    except Exception as e:
+        print("Test failed with exception:", e)
+        return False
+    return True
+
+
 if __name__ == "__main__":
     experiment, equation, variables, constants = get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1)
     print("Generated Equation:", equation)
