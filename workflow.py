@@ -26,6 +26,8 @@ def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles
     """
     Run a workflow between a theorist and an experimentalist.
     """
+    Run a workflow between a theorist and an experimentalist.
+    """
     #TODO: Prepate the workflow cycle
     #burn in with random uniform sampling
     @on_state(output=['conditions'])
