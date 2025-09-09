@@ -14,7 +14,6 @@ def experiment_cycle(theorist, experimentalist, experiment_runner, current_state
     """
     if current_state.experiment_data is None :
         state = current_state
-        #TODO
     else:
         state = theorist(current_state)
 
@@ -26,9 +25,6 @@ def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles
     """
     Run a workflow between a theorist and an experimentalist.
     """
-    Run a workflow between a theorist and an experimentalist.
-    """
-    #TODO: Prepate the workflow cycle
     #burn in with random uniform sampling
     @on_state(output=['conditions'])
     def on_state_uniform_sampling(variables):
@@ -47,10 +43,10 @@ def main():
     from autora.variable import VariableCollection, IV, DV
     from autora.theorist.bms import BMSRegressor
     import artificial_data
-    experiment, equation, variables, constants = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=0)
+    experiment, equation, variables, constants, constant_values = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=1)
     variables = VariableCollection([IV(name=var, value_range=(-10.,10.)) for var in variables], [DV(name='y')])
     initial_state = StandardState(variables=variables, conditions=None, experiment_data=None, models=[])
-
+    print(f'Equation: {equation} with constant values {constant_values}')
     @on_state(output=['models'])
     def theorist_on_state(experiment_data, variables, epochs=10):
         bms = BMSRegressor(epochs=10)
@@ -62,8 +58,8 @@ def main():
         return [bms]
 
     @on_state(output=['conditions'])
-    def experimentalist_on_state(variables):
-        value = uniform_sampling(variables)
+    def experimentalist_on_state(variables, num_samples=1):
+        value = uniform_sampling(variables, num_samples=num_samples)
         return value
 
     @on_state(output=['experiment_data'])

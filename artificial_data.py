@@ -25,19 +25,40 @@ def get_vars_and_constants(equation):
     constants = [arg for arg in args if 'c' in arg]
     return variables, constants
 
-def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1, value_ranges=(-10,10), num_values=100, random_state_seed=42):
+def generate_constant_values(constants, value_ranges=(-10,10), random_state_seed=42):
+    random_gen = np.random.default_rng(random_state_seed)
+    constant_values = {const: random_gen.uniform(value_ranges[0], value_ranges[1]) for const in constants}
+    return constant_values
+
+import sympy
+
+def equation_with_concrete_constants(equation, constant_values):
+    if len(constant_values) > 0:
+        free_symbols = list(equation.free_symbols)
+        symbol_values = {f_sym: constant_values[str(f_sym)] for f_sym in free_symbols if str(f_sym) in list(constant_values.keys())}
+        equation = equation.subs(symbol_values)
+        return equation
+    else:
+        return equation
+
+def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1, value_ranges=(-10,10), num_values=100, random_state_seed=42, constant_gen=generate_constant_values):
     equation = sample_equation(equation_max_depth,equation_num_variables,equation_num_constants)
     variables, constants = get_vars_and_constants(equation)
     num_constants = len(constants)
     num_variables = len(variables)
     independent_vars = [IV(name=var, allowed_values= np.linspace(value_ranges[0], value_ranges[1], num_values), value_range=value_ranges) for var in variables]
     dependent_var = DV(name='y')
+    constant_values = constant_gen(constants, value_ranges, random_state_seed)
+    print(equation, constant_values)
+    equation = equation_with_concrete_constants(equation, constant_values)
+    print(f'equation after substituting constants: {equation}')
     experiment = equation_experiment(equation, independent_vars, dependent_var, random_state=random_state_seed)
-    return experiment, equation, variables, constants
+    return experiment, equation, variables, constants, constant_values
 
 
 
 def test():
+
     """
     Test the artificial experiment runner by generating a random equation and running it on random test conditions.
     :return: True if the test passes, False otherwise.
@@ -75,11 +96,6 @@ if __name__ == "__main__":
     num_samples = 5
     random_data = np.random.uniform(-10, 10, size=(num_samples, len(variables)))
     test_conditions = pd.DataFrame(random_data, columns=variables)
-    if len(constants) > 0:
-        for const in constants:
-            #set all entries on this constant to random value between -10 and 10
-            const_val = np.random.uniform(-10, 10)
-            test_conditions[const] = const_val
     print("Test conditions:")
     print(test_conditions)
     print("Experiment Results:")
