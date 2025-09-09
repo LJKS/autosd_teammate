@@ -1,7 +1,6 @@
 from autora.state import on_state, StandardState
 from autora.variable import VariableCollection, IV, DV
 from autora.experimentalist import random as autora_random
-from sympy.codegen.ast import continue_
 
 
 def uniform_sampling(variables, num_samples=1):

@@ -1,6 +1,4 @@
-from autora.experiment_runner.synthetic.abstract.equation import equation_experiment
 from equation_sampler import sample_equations
-from autora.variable import IV
 from autora.experiment_runner.synthetic.abstract.equation import equation_experiment
 from autora.variable import IV, DV
 import pandas as pd
@@ -29,8 +27,6 @@ def generate_constant_values(constants, value_ranges=(-10,10), random_state_seed
     random_gen = np.random.default_rng(random_state_seed)
     constant_values = {const: random_gen.uniform(value_ranges[0], value_ranges[1]) for const in constants}
     return constant_values
-
-import sympy
 
 def equation_with_concrete_constants(equation, constant_values):
     if len(constant_values) > 0:
