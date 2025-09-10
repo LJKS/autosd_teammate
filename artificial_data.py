@@ -1,6 +1,6 @@
 from equation_sampler import sample_equations
 from autora.experiment_runner.synthetic.abstract.equation import equation_experiment
-from autora.variable import IV, DV
+from autora.variable import IV, DV, VariableCollection
 import pandas as pd
 import numpy as np
 import sympy as sp
@@ -77,7 +77,11 @@ def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables
     equation = equation_with_concrete_constants(equation, constant_values)
     print(f'equation after substituting constants: {equation}')
     experiment = equation_experiment(equation, independent_vars, dependent_var, random_state=random_state_seed)
-    return experiment, equation, variables, constants, constant_values
+    #turn variables into autora variables
+    variables = VariableCollection([IV(name=var, value_range=value_ranges) for var in variables], [DV(name='y')])
+    #equation, constants, constant_values
+    info = {'equation': equation, 'constants': constants, 'constant_values': constant_values}
+    return experiment, variables, info
 
 
 

@@ -42,10 +42,11 @@ def main():
     from autora.variable import VariableCollection, IV, DV
     from autora.theorist.bms import BMSRegressor
     import artificial_data
-    experiment, equation, variables, constants, constant_values = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=1)
-    variables = VariableCollection([IV(name=var, value_range=(-10.,10.)) for var in variables], [DV(name='y')])
+    experiment, variables, info = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=1)
+    equation = info['equation']
+    constants = info['constants']
+    constant_values = info['constant_values']
     initial_state = StandardState(variables=variables, conditions=None, experiment_data=None, models=[])
-    print(f'Equation: {equation} with constant values {constant_values}')
     @on_state(output=['models'])
     def theorist_on_state(experiment_data, variables, epochs=10):
         bms = BMSRegressor(epochs=10)
