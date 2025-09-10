@@ -3,10 +3,30 @@ from autora.experiment_runner.synthetic.abstract.equation import equation_experi
 from autora.variable import IV, DV
 import pandas as pd
 import numpy as np
+import sympy as sp
 
 FUNCTION_SPACE = [ "sin", "cos","tan","exp","log","sqrt","abs"]
 
 OPERATOR_SPACE = ["+","-","*","/","^"]
+
+def check_values_in_domain(equation, value_range):
+    """
+    Check if the equation is defined for all values in the given range.
+    :param equation: sympy equation
+    :param value_range: tuple of (min, max)
+    :return: True if the equation is defined for all values in the range, False otherwise.
+    """
+    target_domain = sp.Interval(value_range[0], value_range[1])
+    symbols = list(equation.free_symbols)
+    print(f'Equation: {equation}, Symbols: {symbols}')
+    for symbol in symbols:
+        #obtain the domain of the symbol in the reals
+        symbol_domain = sp.calculus.util.continuous_domain(equation, symbol, sp.S.Reals)
+        print(f'Symbol: {symbol}, Domain: {symbol_domain}')
+        #check if value range is in the domain
+        if not target_domain.is_subset(symbol_domain):
+            return False
+    return True
 
 def sample_equation(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1):
     equation = sample_equations(num_samples=1, max_depth=equation_max_depth, max_num_variables=equation_num_variables,
@@ -37,11 +57,19 @@ def equation_with_concrete_constants(equation, constant_values):
     else:
         return equation
 
-def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1, value_ranges=(-10,10), num_values=100, random_state_seed=42, constant_gen=generate_constant_values):
-    equation = sample_equation(equation_max_depth,equation_num_variables,equation_num_constants)
+def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1, value_ranges=(-10,10), num_values=100, random_state_seed=42,
+                                     generate_max_attempts=100, constant_gen=generate_constant_values):
+    for attempt in range(generate_max_attempts):
+        equation = sample_equation(equation_max_depth,equation_num_variables,equation_num_constants)
+        print('Trying equation:', equation)
+        if check_values_in_domain(equation, value_ranges):
+            break
+        else:
+            if attempt == generate_max_attempts - 1:
+                raise ValueError(f'Could not generate a valid equation in {generate_max_attempts} attempts.')
+            continue
+    print(f'Generated equation in {attempt+1} attempts: {equation}')
     variables, constants = get_vars_and_constants(equation)
-    num_constants = len(constants)
-    num_variables = len(variables)
     independent_vars = [IV(name=var, allowed_values= np.linspace(value_ranges[0], value_ranges[1], num_values), value_range=value_ranges) for var in variables]
     dependent_var = DV(name='y')
     constant_values = constant_gen(constants, value_ranges, random_state_seed)

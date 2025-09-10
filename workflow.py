@@ -66,12 +66,11 @@ def main():
         results = experiment.run(conditions)
         return results
 
-    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=5, burn_in=5)
+    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=20, burn_in=20)
     print("Final State Models:", final_state.models[-1])
     print(equation)
 
 def test():
-    main()
     try:
         main()
 
