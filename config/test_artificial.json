@@ -1,0 +1,16 @@
+{
+    "experiment_runner":
+        {"type": "artificial",
+         "params": {
+             "equation_max_depth": 4,
+             "equation_num_variables": 2,
+             "equation_num_constants": 1
+         }
+        },
+    "theorist":
+        {"type": "bms",
+         "params": {
+             "epochs": 100
+         }
+        }
+}

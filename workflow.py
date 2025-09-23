@@ -1,7 +1,6 @@
 from autora.state import on_state, StandardState
 from autora.variable import VariableCollection, IV, DV
 from autora.experimentalist import random as autora_random
-from sympy.codegen.ast import continue_
 
 
 def uniform_sampling(variables, num_samples=1):
@@ -43,10 +42,11 @@ def main():
     from autora.variable import VariableCollection, IV, DV
     from autora.theorist.bms import BMSRegressor
     import artificial_data
-    experiment, equation, variables, constants, constant_values = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=1)
-    variables = VariableCollection([IV(name=var, value_range=(-10.,10.)) for var in variables], [DV(name='y')])
+    experiment, variables, info = artificial_data.get_artificial_experiment_runner(equation_max_depth=4, equation_num_variables=2,equation_num_constants=1)
+    equation = info['equation']
+    constants = info['constants']
+    constant_values = info['constant_values']
     initial_state = StandardState(variables=variables, conditions=None, experiment_data=None, models=[])
-    print(f'Equation: {equation} with constant values {constant_values}')
     @on_state(output=['models'])
     def theorist_on_state(experiment_data, variables, epochs=10):
         bms = BMSRegressor(epochs=10)
@@ -67,12 +67,11 @@ def main():
         results = experiment.run(conditions)
         return results
 
-    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=5, burn_in=5)
+    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=20, burn_in=20)
     print("Final State Models:", final_state.models[-1])
     print(equation)
 
 def test():
-    main()
     try:
         main()
 
