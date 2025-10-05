@@ -1,7 +1,39 @@
 from autora.state import on_state, StandardState
 from autora.variable import VariableCollection, IV, DV
 from autora.experimentalist import random as autora_random
+"""
+Basic Workflow
+    Single condition Variable (0-1), Single Observation Variable(0-1)
+    Theorist: LinearRegression
+    Experimentalist: Random Sampling
+    Runner: Firebase Runner (no prolific recruitment)
+"""
 
+import json
+
+from autora.variable import VariableCollection, Variable
+from autora.experimentalist.random import pool
+from autora.experiment_runner.firebase_prolific import firebase_runner
+from autora.state import StandardState, on_state, Delta
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# Add the project root to sys.path
+import sys
+import os
+#project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+#sys.path.append(project_root)
+
+# Step 1: Construct absolute path to `testing_zone/src`
+stimuli_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../testing_zone/src"))
+sys.path.append(stimuli_root)
+
+# Step 2: Now import using `design.stimuli.trial_sequence`
+from design.stimuli.trial_sequence import trial_sequence
+#from testing_zone.design.stimuli.trial_sequence import trial_sequence
+#from testing_zone.src.design.stimuli.trial_sequence import neutral_words, emotional_words
 
 def uniform_sampling(variables, num_samples=1):
     samples = autora_random.pool(variables, num_samples)

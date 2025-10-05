@@ -1,0 +1,43 @@
+{
+  "name": "testing_zone",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@jspsych/plugin-html-keyboard-response": "^2.1.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "autora-firebase-functions": "^0.1.21",
+    "dotenv": "^16.6.1",
+    "firebase": "^9.23.0",
+    "firebase-tools": "^11.30.0",
+    "jspsych": "^7.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1",
+    "sweetpea": "^1.1.2",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "npm run setup:rules &&  react-scripts start",
+    "build": "npm run setup:rules &&  react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "setup:rules": "node scripts/setup_rules.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

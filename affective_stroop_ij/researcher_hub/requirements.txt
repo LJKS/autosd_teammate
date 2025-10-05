@@ -1,0 +1,4 @@
+autora-core
+autora[theorist-darts]
+autora[experimentalist-model-disagreement]
+autora[experiment-runner-firebase-prolific]
