@@ -39,7 +39,6 @@ def main(argparse_args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the Autora workflow with specified parameters.")
     parser.add_argument('-c', '--config_json', type=str, default='test_artificial', help='Maximum depth of the generated equation.')
-    parser.add_argument('-cf', '--config_folder', type=str, default='configs', help='Folder containing configuration files. Default is "./configs".')
+    parser.add_argument('-cf', '--config_folder', type=str, default='./configs', help='Folder containing configuration files. Default is "./configs".')
     args = parser.parse_args()
-
     main(args)
