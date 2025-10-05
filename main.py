@@ -22,6 +22,7 @@ def main(argparse_args):
         bms.fit(x, y)
         return [bms]
 
+
     @on_state(output=['conditions'])
     def experimentalist_on_state(variables, num_samples=1):
         value = uniform_sampling(variables, num_samples=num_samples)
