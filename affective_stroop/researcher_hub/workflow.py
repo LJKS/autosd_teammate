@@ -7,7 +7,7 @@ def uniform_sampling(variables, num_samples=1):
     samples = autora_random.pool(variables, num_samples)
     return samples
 
-def experiment_cycle(theorist, experimentalist, experiment_runner, current_state, sample_datapoints=1):
+def experiment_cycle(theorist, experimentalist, experiment_runner, current_state):
     """
     Run a single cycle between a theorist and an experimentalist.
     """
@@ -17,6 +17,7 @@ def experiment_cycle(theorist, experimentalist, experiment_runner, current_state
         state = theorist(current_state)
 
     state = experimentalist(state)
+    print(f'Sampled conditions: {state.conditions}')
     state = experiment_runner(state)
     return state
 
@@ -30,7 +31,7 @@ def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles
         value = uniform_sampling(variables, num_samples=burn_in)
         return value
 
-    state = experiment_cycle(theorist, on_state_uniform_sampling, experiment_runner, initial_state, sample_datapoints=burn_in)
+    state = experiment_cycle(theorist, on_state_uniform_sampling, experiment_runner, initial_state)
 
     for cycle in range(cycles):
         state = experiment_cycle(theorist, experimentalist, experiment_runner, state)

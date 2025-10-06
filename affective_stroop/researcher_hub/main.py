@@ -3,36 +3,30 @@ from autora.state import on_state, StandardState
 from autora.variable import VariableCollection, IV, DV
 from autora.theorist.bms import BMSRegressor
 import artificial_data
-from workflow import workflow
+from workflow import workflow, uniform_sampling
 import config_mapping
 
 def main(argparse_args):
     config = config_mapping.get_config(argparse_args)
+    general_config = config['general']
     experiment_runner, variables, info = config_mapping.get_experiment_runner(config)
 
     initial_state = StandardState(variables=variables, conditions=None, experiment_data=None, models=[])
 
-    @on_state(output=['models'])
-    def theorist_on_state(experiment_data, variables, epochs=10):
-        bms = BMSRegressor(epochs=10)
-        independent_var_names = [var.name for var in variables.independent_variables]
-        dependent_var_names = [var.name for var in variables.dependent_variables]
-        x = experiment_data[independent_var_names]
-        y = experiment_data[dependent_var_names]
-        bms.fit(x, y)
-        return [bms]
+
 
     @on_state(output=['conditions'])
-    def experimentalist_on_state(variables, num_samples=1):
+    def experimentalist_on_state(variables, num_samples=2):
         value = uniform_sampling(variables, num_samples=num_samples)
+        print(f'Sampled conditions: {value}')
         return value
 
     @on_state(output=['experiment_data'])
     def experiment_runner_on_state(conditions):
-        results = experiment.run(conditions)
+        results = experiment_runner(conditions)
         return results
 
-    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=20, burn_in=20)
+    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=general_config['cycles'], burn_in=general_config['burn_in'])
     print("Final State Models:", final_state.models[-1])
 
 

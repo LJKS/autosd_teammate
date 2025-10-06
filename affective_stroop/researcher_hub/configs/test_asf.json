@@ -1,0 +1,17 @@
+{
+  "general":
+    {
+        "cycles": 1,
+        "burn_in": 1,
+        "save_path": "results/test_asf"
+    },
+  "experiment_runner":
+  {
+    "type": "affective_stroop_firebase",
+    "kwargs": {
+      "firebase_credentials_path": "firebase_credentials.json",
+      "preprocessing":"phase_summary",
+      "length_range": [1, 2]
+    }
+  }
+}

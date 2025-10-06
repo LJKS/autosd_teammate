@@ -8,7 +8,7 @@ Basic Workflow
 
 import json
 
-from autora.variable import VariableCollection, Variable
+from autora.variable import VariableCollection, Variable, ValueType
 from autora.experimentalist.random import pool
 from autora.experiment_runner.firebase_prolific import firebase_runner
 from autora.state import StandardState, on_state, Delta
@@ -20,6 +20,9 @@ from sklearn.linear_model import LinearRegression
 # Add the project root to sys.path
 import sys
 import os
+
+from triton.language import dtype
+
 #project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 #sys.path.append(project_root)
 # Step 1: Construct absolute path to `testing_zone/src`
@@ -88,7 +91,58 @@ def experimentalist_on_state(variables, num_samples):
 
 
 # accuracy and mean RT are computed per phase
-def compute_phase_metrics(df, exclude_practice=True):
+def compute_phase_metrics(df):
+    #df is a dataframe with important columns:
+    # - rt, phase, accuracy (i.e. if correct), valence
+    #analysis steps:
+    # - group by phase
+    # - throw out rows without a given phase (phase is NaN)
+    # throw out rows with phase equals  practice
+    # - group by phase
+    # per phase:
+    # - accuracy: mean of correct
+    # - assert the valence for all entries in this phase is the same, if not raise error
+    # compute mean RT for correct trials, fallse trials, all trials
+    #return dataframe with single row, with three rows (1 per phase) with entries:
+    # phase, accuracy, mean_rt, n_trials, valence
+
+    #pick the relevant columns
+    # Select relevant columns
+    df = df[["phase", "correct", "rt", "valence"]]
+    df = df.dropna(subset=["phase"])
+    df = df[df["phase"] != "practice"]
+    df = df.dropna(subset=["correct", "rt"])
+
+    df["correct"] = df["correct"].astype(bool)
+    df["rt"] = pd.to_numeric(df["rt"], errors="coerce")
+
+    def phase_agg(group):
+        accuracy = group["correct"].mean()
+        mean_rt = group["rt"].mean()
+        mean_rt_correct = group.loc[group["correct"], "rt"].mean()
+        mean_rt_incorrect = group.loc[~group["correct"], "rt"].mean()
+        n_trials = group["rt"].count()
+        valence = group["valence"].iloc[0] if group["valence"].nunique() == 1 else "mixed"
+        return pd.Series({
+            "accuracy": accuracy,
+            "mean_rt": mean_rt,
+            "mean_rt_correct": mean_rt_correct,
+            "mean_rt_incorrect": mean_rt_incorrect,
+            "n_trials": n_trials,
+            "valence": valence
+        })
+
+    phase_summary = df.groupby("phase").apply(phase_agg).reset_index()
+    print(phase_summary)
+    if (phase_summary["valence"] == "mixed").any():
+        raise ValueError("Valence is not consistent within at least one phase.")
+    print(phase_summary)
+    #rename the n_trials column to length due to legacy code
+    phase_summary = phase_summary.rename(columns={"n_trials": "length"})
+    print('phase summary:', phase_summary)
+    return phase_summary
+
+    """
     df = df.copy()
 
     if exclude_practice:
@@ -109,6 +163,7 @@ def compute_phase_metrics(df, exclude_practice=True):
     )
 
     return phase_summary
+    """
 
 # parse the data
 def parse_raw_experiment_data(raw_data):
@@ -150,23 +205,47 @@ def parse_raw_experiment_data(raw_data):
     df = pd.DataFrame(all_trial_data)
     return df
 
-def get_affective_stroop_firebase_runner():
-    firebase_credentials = json.load(open("firebase_credentials.json"))
+def get_affective_stroop_firebase_runner(firebase_credentials_path: str="firebase_credentials.json",
+                                         preprocessing: str="raw",
+                                         length_range: tuple=(10, 80)):
+    """
+    Get an experiment runner that runs the affective stroop task on firebase.
+    :param firebase_credentials_path: local path to the firebase credentials json file
+    :param preprocessing: either raw or phase_summary
+    :return:
+    """
+    firebase_credentials = json.load(open(firebase_credentials_path))
 
     # simple experiment runner that runs the experiment on firebase
-    experiment_runner = firebase_runner(
+    firebase_experiment = firebase_runner(
         firebase_credentials=firebase_credentials,
         time_out=100,
         sleep_time=5)
     info= "Lieber Leon, wir hoffen du wirst hiermit glücklich:D LG"
 
-    variables = VariableCollection(
-        independent_variables=[
-            Variable(name="length", value_range=(10, 80)),
-            Variable(name="phase", allowed_values=["neutral1", "emotional", "neutral2"])
-        ],
-        dependent_variables=[Variable(name="accuracy", value_range=(0, 1)),
-                             Variable(name="mean_rt", value_range=(0, 5000))])
+    if preprocessing == "phase_summary":
+        variables = VariableCollection(
+            independent_variables=[
+                Variable(name="length", value_range=length_range, allowed_values=list(range(length_range[0], length_range[1]+1)), type=ValueType.INTEGER)
+            ],
+            covariates=[
+                Variable(name="phase", allowed_values=["neutral1", "emotional", "neutral2"]),
+                Variable(name="valence", allowed_values=["neutral", "emotional"]),
+                Variable(name="accuracy", value_range=(0, 1))
+            ],
+            dependent_variables=[
+                Variable(name="mean_rt_correct", value_range=(0, 5000)),
+                Variable(name="mean_rt_incorrect", value_range=(0, 5000)),
+                Variable(name="mean_rt", value_range=(0, 5000))
+            ]
+        )
+    elif preprocessing == "raw":
+        #TODO AHHHHHHHHHHHHHHHHHHHHHHHH
+        raise NotImplementedError("Raw data variable collection not implemented yet.")
+    else:
+        raise ValueError(f"Preprocessing {preprocessing} not recognized. Use either 'raw' or 'phase_summary'.")
+
+
     def experiment_runner(conditions):
         js_codes = []
         for _, row in conditions.iterrows():
@@ -176,25 +255,28 @@ def get_affective_stroop_firebase_runner():
         # these are the conditions we send to firebase (only the experiment code), more information than just length
         conditions_to_send = conditions.copy()
         conditions_to_send["experiment_code"] = js_codes
-
         # raw data: u.a. trials(enthält alle recordings vom participant wie acc, rt)
-        raw_data = experiment_runner(conditions_to_send)
-
+        raw_data = firebase_experiment(conditions_to_send)
         # parse and compute phase from raw data
         df = parse_raw_experiment_data(raw_data)
-        phase_summary = compute_phase_metrics(df, exclude_practice=True)
-
+        phase_summary = compute_phase_metrics(df)
         '''
         example phase summary: 
         phase	    accuracy	mean_rt	n_trials
         neutral1	0.85	    634.2	10
         emotional	0.78	    712.5	10
         neutral2	0.88	    645.1	10
-
-        maybe experiment not necessary??
         '''
-
-        return df, phase_summary
+        print('?????????????')
+        if preprocessing == "raw":
+            print('results!!!!!!!!!!!!', df)
+            #save df to csv
+            df.to_csv('results.csv', index=False)
+            return df
+        elif preprocessing == "phase_summary":
+            return phase_summary
+        else:
+            raise ValueError(f"Preprocessing {preprocessing} not recognized. Use either 'raw' or 'phase_summary'.")
 
     return experiment_runner, variables, info
 
