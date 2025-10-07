@@ -7,21 +7,22 @@ def uniform_sampling(variables, num_samples=1):
     samples = autora_random.pool(variables, num_samples)
     return samples
 
-def experiment_cycle(theorist, experimentalist, experiment_runner, current_state):
+def experiment_cycle(theorist, experimentalist, experiment_runner, current_state, theorist_preprocessing, save_func, step):
     """
     Run a single cycle between a theorist and an experimentalist.
     """
     if current_state.experiment_data is None :
         state = current_state
     else:
-        state = theorist(current_state)
+        state = theorist(current_state, preprocessing_function=theorist_preprocessing)
 
     state = experimentalist(state)
     print(f'Sampled conditions: {state.conditions}')
     state = experiment_runner(state)
+    save_func(state, theorist_preprocessing_function=theorist_preprocessing, step=step)
     return state
 
-def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles, burn_in):
+def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles, burn_in, theorist_preprocessing, save_func):
     """
     Run a workflow between a theorist and an experimentalist.
     """
@@ -31,10 +32,10 @@ def workflow(theorist, experimentalist, experiment_runner, initial_state, cycles
         value = uniform_sampling(variables, num_samples=burn_in)
         return value
 
-    state = experiment_cycle(theorist, on_state_uniform_sampling, experiment_runner, initial_state)
+    state = experiment_cycle(theorist, on_state_uniform_sampling, experiment_runner, initial_state, theorist_preprocessing=theorist_preprocessing, save_func=save_func, step=0)
 
     for cycle in range(cycles):
-        state = experiment_cycle(theorist, experimentalist, experiment_runner, state)
+        state = experiment_cycle(theorist, experimentalist, experiment_runner, state, theorist_preprocessing=theorist_preprocessing, save_func=save_func, step=cycle+1)
     return state
 
 

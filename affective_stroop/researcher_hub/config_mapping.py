@@ -2,10 +2,17 @@ import artificial_data
 import os
 import json
 import affective_stroop_firebase_runner
+import theorist_zoo
+import visualization_and_serialization
+
+SAVE_FREQUENCY_DEFAULT = 5
 
 EXPERIMENT_RUNNERS = {'artificial': artificial_data.get_artificial_experiment_runner,
                       'affective_stroop_firebase': affective_stroop_firebase_runner.get_affective_stroop_firebase_runner}
-
+THEORISTS = {'basic_bms': theorist_zoo.get_bms_theorist}
+THEORIST_PREPROCESSING_FUNCTIONS = {'basic_affective_stroop_theorist_preprocessing': theorist_zoo.basic_affective_stroop_theorist_preprocessing,
+                                    'none': lambda x: x}
+SAVE_FUNCS = {'affective_stroop_phase_summary_visualization_and_serialization': visualization_and_serialization.get_affective_stroop_phase_summary_visualization_and_serialization}
 def check_config(config):
     """
     Check if the config is valid.
@@ -54,3 +61,20 @@ def get_experiment_runner(config):
         return experiment_runner, variables, info
     else:
         raise ValueError(f"Experiment runner type {experiment_runner_type} not recognized/implemented. Please adjust config_mapping.py to include it.")
+
+def get_theorist(config):
+    theorist_config = config['theorist']
+    theorist_type = theorist_config["model"]
+    theorist = THEORISTS[theorist_type]
+    theorist_kwargs = theorist_config.get('model_kwargs', {})
+    theorist = theorist(**theorist_kwargs)
+    theorist_preprocessing_function_type = theorist_config['preprocessing_function']
+    preprocessing_function = THEORIST_PREPROCESSING_FUNCTIONS[theorist_preprocessing_function_type]
+    return theorist, preprocessing_function
+
+def get_save_func(config):
+    save_config = config['save']
+    save_func_factory = SAVE_FUNCS[save_config['type']]
+    save_path = config['general']['save_path']
+    save_func = save_func_factory(config, save_path)
+    return save_func

@@ -92,6 +92,9 @@ def experimentalist_on_state(variables, num_samples):
 
 # accuracy and mean RT are computed per phase
 def compute_phase_metrics(df):
+    #import time#get time string
+    #time_str = time.strftime("%Y%m%d-%H%M%S")
+    #df.to_csv(f'debug_full_data_{time_str}.csv', index=False)
     #df is a dataframe with important columns:
     # - rt, phase, accuracy (i.e. if correct), valence
     #analysis steps:
@@ -108,40 +111,44 @@ def compute_phase_metrics(df):
 
     #pick the relevant columns
     # Select relevant columns
-    df = df[["phase", "correct", "rt", "valence"]]
-    df = df.dropna(subset=["phase"])
-    df = df[df["phase"] != "practice"]
-    df = df.dropna(subset=["correct", "rt"])
+    dfs_by_participant = [df_participant for _, df_participant in df.groupby("participant_id")]
+    def participant_to_phase_summary(participant_df):
+        participant_df = participant_df[["phase", "correct", "rt", "valence"]]
+        participant_df = participant_df.dropna(subset=["phase"])
+        participant_df = participant_df[participant_df["phase"] != "practice"]
+        participant_df = participant_df.dropna(subset=["correct", "rt"])
 
-    df["correct"] = df["correct"].astype(bool)
-    df["rt"] = pd.to_numeric(df["rt"], errors="coerce")
+        participant_df["correct"] = participant_df["correct"].astype(bool)
+        participant_df["rt"] = pd.to_numeric(participant_df["rt"], errors="coerce")
 
-    def phase_agg(group):
-        accuracy = group["correct"].mean()
-        mean_rt = group["rt"].mean()
-        mean_rt_correct = group.loc[group["correct"], "rt"].mean()
-        mean_rt_incorrect = group.loc[~group["correct"], "rt"].mean()
-        n_trials = group["rt"].count()
-        valence = group["valence"].iloc[0] if group["valence"].nunique() == 1 else "mixed"
-        return pd.Series({
-            "accuracy": accuracy,
-            "mean_rt": mean_rt,
-            "mean_rt_correct": mean_rt_correct,
-            "mean_rt_incorrect": mean_rt_incorrect,
-            "n_trials": n_trials,
-            "valence": valence
-        })
+        def phase_agg(group):
+            accuracy = group["correct"].mean()
+            mean_rt = group["rt"].mean()
+            mean_rt_correct = group.loc[group["correct"], "rt"].mean()
+            mean_rt_incorrect = group.loc[~group["correct"], "rt"].mean()
+            n_trials = group["rt"].count()
+            valence = group["valence"].iloc[0] if group["valence"].nunique() == 1 else "mixed"
+            return pd.Series({
+                "accuracy": accuracy,
+                "mean_rt": mean_rt,
+                "mean_rt_correct": mean_rt_correct,
+                "mean_rt_incorrect": mean_rt_incorrect,
+                "n_trials": n_trials,
+                "valence": valence
+            })
 
-    phase_summary = df.groupby("phase").apply(phase_agg).reset_index()
-    print(phase_summary)
-    if (phase_summary["valence"] == "mixed").any():
-        raise ValueError("Valence is not consistent within at least one phase.")
-    print(phase_summary)
-    #rename the n_trials column to length due to legacy code
-    phase_summary = phase_summary.rename(columns={"n_trials": "length"})
-    print('phase summary:', phase_summary)
+        participant_phase_summary = participant_df.groupby("phase").apply(phase_agg).reset_index()
+        print(participant_phase_summary)
+        if (participant_phase_summary["valence"] == "mixed").any():
+            raise ValueError("Valence is not consistent within at least one phase.")
+        print(participant_phase_summary)
+        #rename the n_trials column to length due to legacy code
+        participant_phase_summary = participant_phase_summary.rename(columns={"n_trials": "length"})
+        print('phase summary:', participant_phase_summary)
+        return participant_phase_summary
+    participant_dfs = [participant_to_phase_summary(p_df) for p_df in dfs_by_participant]
+    phase_summary = pd.concat(participant_dfs, ignore_index=True)
     return phase_summary
-
     """
     df = df.copy()
 

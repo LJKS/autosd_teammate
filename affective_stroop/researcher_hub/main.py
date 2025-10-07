@@ -16,18 +16,24 @@ def main(argparse_args):
 
 
     @on_state(output=['conditions'])
-    def experimentalist_on_state(variables, num_samples=2):
+    def experimentalist_on_state(variables, num_samples=general_config['experimentalist_num_samples']):
         value = uniform_sampling(variables, num_samples=num_samples)
         print(f'Sampled conditions: {value}')
         return value
+
+    theorist, theorist_preprocessing = config_mapping.get_theorist(config)
 
     @on_state(output=['experiment_data'])
     def experiment_runner_on_state(conditions):
         results = experiment_runner(conditions)
         return results
 
-    final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=general_config['cycles'], burn_in=general_config['burn_in'])
+    save_func = config_mapping.get_save_func(config)
+
+    final_state = workflow(theorist, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=general_config['cycles'], burn_in=general_config['burn_in'],
+                           theorist_preprocessing=theorist_preprocessing, save_func=save_func)
     print("Final State Models:", final_state.models[-1])
+    print(f"debug:{[type(model) for key,model in final_state.models[-1].items()]}")
 
 
 if __name__ == "__main__":
