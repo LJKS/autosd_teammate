@@ -17,7 +17,6 @@ def experiment_cycle(theorist, experimentalist, experiment_runner, current_state
         state = theorist(current_state, preprocessing_function=theorist_preprocessing)
 
     state = experimentalist(state)
-    print(f'Sampled conditions: {state.conditions}')
     state = experiment_runner(state)
     save_func(state, theorist_preprocessing_function=theorist_preprocessing, step=step)
     return state
@@ -71,8 +70,6 @@ def main():
 
     final_state = workflow(theorist_on_state, experimentalist_on_state, experiment_runner_on_state, initial_state, cycles=20, burn_in=20)
     print("Final State Models:", final_state.models[-1])
-    print(equation)
-
 def test():
     try:
         main()

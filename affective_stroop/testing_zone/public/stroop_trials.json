@@ -1,146 +1,68 @@
 [
   {
-    "color": "red",
-    "word": "tree",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "blue",
-    "word": "paper",
+    "color": "yellow",
+    "word": "hat",
     "valence": "neutral",
     "phase": "neutral1"
   },
   {
     "color": "green",
-    "word": "shirt",
+    "word": "door",
     "valence": "neutral",
     "phase": "neutral1"
-  },
-  {
-    "color": "red",
-    "word": "paper",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "blue",
-    "word": "paper",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "yellow",
-    "word": "car",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "green",
-    "word": "phone",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "yellow",
-    "word": "cup",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "red",
-    "word": "chair",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "blue",
-    "word": "window",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "blue",
-    "word": "fear",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "red",
-    "word": "pain",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "blue",
-    "word": "hurt",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "yellow",
-    "word": "fear",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "green",
-    "word": "trauma",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "yellow",
-    "word": "sad",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "blue",
-    "word": "suffer",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "yellow",
-    "word": "suffer",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "green",
-    "word": "hurt",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "red",
-    "word": "sad",
-    "valence": "emotional",
-    "phase": "emotional"
-  },
-  {
-    "color": "blue",
-    "word": "chair",
-    "valence": "neutral",
-    "phase": "neutral2"
-  },
-  {
-    "color": "blue",
-    "word": "lamp",
-    "valence": "neutral",
-    "phase": "neutral2"
-  },
-  {
-    "color": "red",
-    "word": "phone",
-    "valence": "neutral",
-    "phase": "neutral2"
   },
   {
     "color": "green",
     "word": "book",
     "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "pen",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "lamp",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "murder",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "blood",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "blood",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "abuse",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "blood",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "phone",
+    "valence": "neutral",
     "phase": "neutral2"
   },
   {
@@ -150,32 +72,20 @@
     "phase": "neutral2"
   },
   {
-    "color": "blue",
-    "word": "car",
+    "color": "red",
+    "word": "hat",
     "valence": "neutral",
     "phase": "neutral2"
   },
   {
     "color": "yellow",
-    "word": "tree",
-    "valence": "neutral",
-    "phase": "neutral2"
-  },
-  {
-    "color": "yellow",
-    "word": "phone",
-    "valence": "neutral",
-    "phase": "neutral2"
-  },
-  {
-    "color": "yellow",
-    "word": "table",
+    "word": "door",
     "valence": "neutral",
     "phase": "neutral2"
   },
   {
     "color": "green",
-    "word": "phone",
+    "word": "pen",
     "valence": "neutral",
     "phase": "neutral2"
   }

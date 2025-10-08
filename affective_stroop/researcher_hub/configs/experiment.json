@@ -1,0 +1,33 @@
+{
+  "general":
+    {
+        "cycles": 100,
+        "burn_in": 1,
+        "experimentalist_num_samples": 2,
+        "save_path": "results/pilot"
+    },
+  "experiment_runner":
+  {
+    "type": "affective_stroop_firebase",
+    "kwargs":
+    {
+      "firebase_credentials_path": "firebase_credentials.json",
+      "preprocessing":"phase_summary",
+      "length_range": [5, 40]
+    }
+  },
+  "theorist":
+  {
+    "model": "basic_bms",
+    "model_kwargs":
+    {
+      "epochs": 150
+    },
+    "preprocessing_function": "basic_affective_stroop_theorist_preprocessing"
+  },
+  "save": {
+    "type": "affective_stroop_phase_summary_visualization_and_serialization",
+    "save_every": 1,
+    "save_path": "results/experiment"
+  }
+}

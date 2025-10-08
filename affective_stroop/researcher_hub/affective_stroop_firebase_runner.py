@@ -31,64 +31,6 @@ sys.path.append(stimuli_root)
 
 # Step 2: Now import using `design.stimuli.trial_sequence`
 from design.stimuli.trial_sequence import trial_sequence
-#from testing_zone.design.stimuli.trial_sequence import trial_sequence
-#from testing_zone.src.design.stimuli.trial_sequence import neutral_words, emotional_words
-
-
-# *** Set up variables *** #       # length and phase
-
-# *** State *** #
-# With the variables, we can set up a state. The state object represents the state of our
-# closed loop experiment.
-
-# *** Components/Agents *** #
-# Components are functions that run on the state. The main components are:
-# - theorist
-# - experiment-runner
-# - experimentalist
-# See more about components here: https://autoresearch.github.io/autora/
-
-
-# ** Theorist ** #
-# Here we use a linear regression as theorist, but you can use other theorists included in
-# autora (for a list: https://autoresearch.github.io/autora/theorist/)
-
-#theorist = LinearRegression()
-
-# To use the theorist on the state object, we wrap it with the on_state functionality and return a
-# Delta object.
-# Note: The if the input arguments of the theorist_on_state function are state-fields like
-# experiment_data, variables, ... , then using this function on a state object will automatically
-# use those state fields.
-# The output of these functions is always a Delta object. The keyword argument in this case, tells
-# the state object witch field to update.
-
-"""
-@on_state()
-def theorist_on_state(experiment_data, variables):
-    ivs = [iv.name for iv in variables.independent_variables]
-    dvs = [dv.name for dv in variables.dependent_variables]
-    x = experiment_data[ivs]
-    y = experiment_data[dvs]
-    return Delta(models=[theorist.fit(x, y)])
-
-# ** Experimentalist ** #
-# Here, we use a random pool and use the wrapper to create a on state function
-# Note: The argument num_samples is not a state field. Instead, we will pass it in when calling
-# the function
-
-
-@on_state()
-def experimentalist_on_state(variables, num_samples):
-    return Delta(conditions=pool(variables, num_samples))
-"""
-
-# ** Experiment Runner ** #
-# We will run our experiment on firebase and need credentials. You will find them here:
-# (https://console.firebase.google.com/)
-#   -> project -> project settings -> service accounts -> generate new private key
-
-
 
 # accuracy and mean RT are computed per phase
 def compute_phase_metrics(df):
@@ -138,39 +80,14 @@ def compute_phase_metrics(df):
             })
 
         participant_phase_summary = participant_df.groupby("phase").apply(phase_agg).reset_index()
-        print(participant_phase_summary)
         if (participant_phase_summary["valence"] == "mixed").any():
             raise ValueError("Valence is not consistent within at least one phase.")
-        print(participant_phase_summary)
         #rename the n_trials column to length due to legacy code
         participant_phase_summary = participant_phase_summary.rename(columns={"n_trials": "length"})
-        print('phase summary:', participant_phase_summary)
         return participant_phase_summary
     participant_dfs = [participant_to_phase_summary(p_df) for p_df in dfs_by_participant]
     phase_summary = pd.concat(participant_dfs, ignore_index=True)
     return phase_summary
-    """
-    df = df.copy()
-
-    if exclude_practice:
-        df = df[df["phase"] != "practice"]
-
-    df["correct"] = df["correct"].astype(bool)
-    df["rt"] = pd.to_numeric(df["rt"], errors="coerce")
-
-    # metrics per phase
-    phase_summary = (
-        df.groupby("phase")
-        .agg(
-            accuracy=("correct", "mean"),
-            mean_rt=("rt", "mean"),
-            n_trials=("rt", "count")
-        )
-        .reset_index()
-    )
-
-    return phase_summary
-    """
 
 # parse the data
 def parse_raw_experiment_data(raw_data):
@@ -274,9 +191,7 @@ def get_affective_stroop_firebase_runner(firebase_credentials_path: str="firebas
         emotional	0.78	    712.5	10
         neutral2	0.88	    645.1	10
         '''
-        print('?????????????')
         if preprocessing == "raw":
-            print('results!!!!!!!!!!!!', df)
             #save df to csv
             df.to_csv('results.csv', index=False)
             return df
@@ -287,23 +202,3 @@ def get_affective_stroop_firebase_runner(firebase_credentials_path: str="firebas
 
     return experiment_runner, variables, info
 
-
-"""
-# Now, we can run our components
-for _ in range(3):
-    state = experimentalist_on_state(state, num_samples=2)  # Collect 2 conditions per iteration
-    state = runner_on_state(state)
-    state = theorist_on_state(state)
-
-
-# *** Report the data *** #
-# If you changed the theorist, also change this part
-def report_linear_fit(m: LinearRegression, precision=4):
-    s = f"y = {np.round(m.coef_[0].item(), precision)} x " \
-        f"+ {np.round(m.intercept_.item(), 4)}"
-    return s
-
-
-print(report_linear_fit(state.models[0]))
-print(report_linear_fit(state.models[-1]))
-"""

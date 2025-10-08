@@ -9,6 +9,7 @@ def save_this_cycle(config, step):
     if step % save_every == 0 or step == max_steps:
         return True
     return False
+
 def get_affective_stroop_phase_summary_visualization_and_serialization(config, save_path):
     def affective_stroop_phase_summary_visualization_and_serialization(state, theorist_preprocessing_function, step):
         if save_this_cycle(config, step):

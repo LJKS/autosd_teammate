@@ -75,6 +75,6 @@ def get_theorist(config):
 def get_save_func(config):
     save_config = config['save']
     save_func_factory = SAVE_FUNCS[save_config['type']]
-    save_path = config['general']['save_path']
+    save_path = config['save']['save_path']
     save_func = save_func_factory(config, save_path)
     return save_func

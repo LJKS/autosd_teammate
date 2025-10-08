@@ -43,9 +43,7 @@ def get_bms_theorist(epochs=10):
         covariate_var_names = [var.name for var in variables.covariates]
         dependent_var_names = [var.name for var in variables.dependent_variables]
         x = experiment_data[independent_var_names + covariate_var_names]
-        print(f'x pre preprocessing: {x}')
         x = preprocessing_function(x)
-        print(f'x post preprocessing: {x}')
         y = experiment_data[dependent_var_names]
         #split y into seperate columns, as BMSRegressor expects a 1D array for y, then fit (parallel via ray) a separate BMSRegressor for each dependent variable
         if len(dependent_var_names) == 1:
@@ -60,13 +58,10 @@ def get_bms_theorist(epochs=10):
             columns = {col: y[[col]] for col in dependent_var_names}
             @ray.remote
             def fit_bms(col, x, col_data_y):
-                print(f'Fitting BMS for column: {col}, with shapes x: {x.shape}, y: {col_data_y.shape}')
-                print(f'Column {col} has input data {x}')
                 #if col_data_y has no data, return an empty theorist
                 bms = BMSRegressor(epochs=epochs)
                 x, col_data = remove_NaN_rows(x, col_data_y)
                 if has_no_data(col_data):
-                    print(f'WARNING: Fitting theorist on empty data, returning empty theorist')
                     return {col: get_empty_theorist()}
                 bms.fit(x, col_data)
                 return {col: bms}
