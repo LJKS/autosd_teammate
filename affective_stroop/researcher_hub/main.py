@@ -5,6 +5,7 @@ from autora.theorist.bms import BMSRegressor
 import artificial_data
 from workflow import workflow, uniform_sampling
 import config_mapping
+import pandas as pd
 
 def main(argparse_args):
     """
@@ -24,8 +25,18 @@ def main(argparse_args):
     # Initialize the experiment state with variables but no conditions, data, or models yet
     initial_state = StandardState(variables=variables, conditions=None, experiment_data=None, models=[])
 
+    load_data = config['general'].get('load_data', None)
+    print(f'Loading data from {load_data}')
 
-    # Define the experimentalist function to sample conditions
+    if load_data is not None:
+        @on_state(output=['experiment_data'])
+        def load_data_on_state():
+            experiment_data = pd.read_csv(load_data)
+            return experiment_data
+        initial_state = load_data_on_state(initial_state)
+
+        print(f'Loaded data with shape {initial_state.experiment_data.shape}')
+
     @on_state(output=['conditions'])
     def experimentalist_on_state(variables, num_samples=general_config['experimentalist_num_samples']):
         # Sample conditions uniformly from the variable space

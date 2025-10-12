@@ -36,6 +36,7 @@ def experiment_cycle(theorist, experimentalist, experiment_runner, current_state
         state = current_state
     else:
         state = theorist(current_state, preprocessing_function=theorist_preprocessing)
+        print(f"Theorist models at step {step}:", state.models[-1])
 
     state = experimentalist(state)
     state = experiment_runner(state)
