@@ -2,11 +2,24 @@ from autora.theorist.bms import BMSRegressor
 import pandas as pd
 from autora.state import on_state
 import ray
+
 def has_no_data(df):
+    """
+    Check whether a pandas DataFrame contains no rows.
+    :param df: pandas.DataFrame - The DataFrame to check.
+    :return: bool - True if the DataFrame is empty (contains zero rows), False otherwise.
+    """
     num_rows = df.shape[0]
     return num_rows == 0
 
 def get_empty_theorist():
+    """
+    Create an "empty" theorist object with no learning capability, useful as a placeholder.
+    :return: object - An instance of EmptyTheorist, which has the following behavior:
+                - fit(x, y): does nothing and returns self.
+                - predict(x): returns a zero array of shape (number of samples, 1).
+                - __str__(): returns the string "EmptyTheorist".
+    """
     #empty theorist has fit and predict methods that do nothing, predict returns zeros
     class EmptyTheorist:
         def fit(self, x, y):
@@ -17,9 +30,12 @@ def get_empty_theorist():
         def __str__(self):
             return "EmptyTheorist"
     return EmptyTheorist()
+
 def join_dicts(dicts):
     """
-    Join a list of dictionaries into a single dictionary.
+    Merge a list of dictionaries into a single dictionary. Later dictionaries overwrite earlier ones on key conflicts.
+    :param dicts: list[dict] - List of dictionaries to be merged.
+    :return: dict - A single dictionary containing all key-value pairs from the input dictionaries.
     """
     result = {}
     for d in dicts:
@@ -28,7 +44,11 @@ def join_dicts(dicts):
 
 def remove_NaN_rows(df_x, df_y):
     """
-    Remove rows with NaN values from both dataframes, ensuring alignment.
+    Remove rows containing NaN values from two aligned DataFrames, preserving their alignment.
+    :param df_x: pandas.DataFrame - First DataFrame.
+    :param df_y: pandas.DataFrame - Second DataFrame, aligned with df_x.
+    :return: tuple[pandas.DataFrame, pandas.DataFrame] - Tuple of cleaned DataFrames (df_x_cleaned, df_y_cleaned) 
+             with rows containing NaNs removed from both.
     """
     combined = pd.concat([df_x, df_y], axis=1)
     cleaned = combined.dropna()
@@ -37,6 +57,24 @@ def remove_NaN_rows(df_x, df_y):
     return cleaned_x, cleaned_y
 
 def get_bms_theorist(epochs=10):
+    """
+    Create a BMS theorist function for fitting Bayesian multivariate regressors to experiment data.
+    :param epochs: int - Number of training epochs for each BMSRegressor (default: 10).
+    :return: callable - A function that can be used within a workflow to fit BMS models. 
+             The function accepts:
+                - experiment_data: pandas.DataFrame - Trial-level experiment data.
+                - variables: VariableCollection - Object containing independent, covariate, and dependent variables.
+                - preprocessing_function: callable - Function to preprocess the independent and covariate data.
+             and returns:
+                - list containing either:
+                    * a single BMSRegressor if there is only one dependent variable, or
+                    * a dictionary mapping dependent variable names to BMSRegressors (or EmptyTheorist if no data).
+
+    Notes:
+      - Automatically removes rows with NaNs from x and y before fitting.
+      - Uses Ray for parallel fitting when multiple dependent variables are present.
+      - Returns an EmptyTheorist for any dependent variable that has no valid data.
+    """
     @on_state(output=['models'])
     def bms_theorist(experiment_data, variables, preprocessing_function):
         independent_var_names = [var.name for var in variables.independent_variables]
