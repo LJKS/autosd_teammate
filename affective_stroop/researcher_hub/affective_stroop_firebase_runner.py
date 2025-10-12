@@ -34,6 +34,21 @@ from design.stimuli.trial_sequence import trial_sequence
 
 # accuracy and mean RT are computed per phase
 def compute_phase_metrics(df):
+    """
+    Compute behavioral performance metrics per phase for each participant in an experimental dataset.
+    :param df: pandas.DataFrame - Input dataframe containing at least the following columns:
+                'participant_id', 'phase', 'correct', 'rt', and 'valence'.
+    :return: pandas.DataFrame - A dataframe summarizing performance per participant and phase, 
+             with the following columns:
+                - phase: str - Name of the experimental phase.
+                - accuracy: float - Mean accuracy (proportion of correct responses).
+                - mean_rt: float - Mean reaction time across all trials.
+                - mean_rt_correct: float - Mean reaction time for correct trials.
+                - mean_rt_incorrect: float - Mean reaction time for incorrect trials.
+                - length: int - Number of valid trials in the phase (renamed from n_trials).
+                - valence: str - Valence label for the phase (must be consistent within each phase).
+    :raises ValueError: If valence values are not consistent within a phase for any participant.
+    """
     #import time#get time string
     #time_str = time.strftime("%Y%m%d-%H%M%S")
     #df.to_csv(f'debug_full_data_{time_str}.csv', index=False)
@@ -55,6 +70,21 @@ def compute_phase_metrics(df):
     # Select relevant columns
     dfs_by_participant = [df_participant for _, df_participant in df.groupby("participant_id")]
     def participant_to_phase_summary(participant_df):
+        """
+        Compute phase-level behavioral metrics for a single participant.
+        :param participant_df: pandas.DataFrame - Dataframe containing the participant’s trial-level data with 
+            columns 'phase', 'correct', 'rt', and 'valence'.
+        :return: pandas.DataFrame - A dataframe summarizing the participant’s performance per phase, 
+                with the following columns:
+                    - phase: str - Name of the experimental phase.
+                    - accuracy: float - Mean accuracy (proportion of correct trials).
+                    - mean_rt: float - Mean reaction time across all valid trials.
+                    - mean_rt_correct: float - Mean reaction time for correct trials only.
+                    - mean_rt_incorrect: float - Mean reaction time for incorrect trials only.
+                    - length: int - Number of valid trials in the phase (renamed from n_trials for compatibility).
+                    - valence: str - Valence label for the phase; must be consistent, otherwise raises an error.
+        :raises ValueError: If multiple valence values are found within the same phase (i.e., valence is not consistent).
+        """
         participant_df = participant_df[["phase", "correct", "rt", "valence"]]
         participant_df = participant_df.dropna(subset=["phase"])
         participant_df = participant_df[participant_df["phase"] != "practice"]
@@ -64,6 +94,18 @@ def compute_phase_metrics(df):
         participant_df["rt"] = pd.to_numeric(participant_df["rt"], errors="coerce")
 
         def phase_agg(group):
+            """
+            Aggregate trial-level data within a single experimental phase to compute summary metrics.
+            :param group: pandas.DataFrame - Subset of a participant’s data corresponding to one experimental phase,
+                containing the columns 'correct', 'rt', and 'valence'.
+            :return: pandas.Series - A series containing phase-level summary statistics:
+                        - accuracy: float - Mean proportion of correct trials.
+                        - mean_rt: float - Mean reaction time across all trials.
+                        - mean_rt_correct: float - Mean reaction time for correct trials only.
+                        - mean_rt_incorrect: float - Mean reaction time for incorrect trials only.
+                        - n_trials: int - Number of valid trials in the phase.
+                        - valence: str - Valence for the phase ('mixed' if multiple valence values are present).
+            """
             accuracy = group["correct"].mean()
             mean_rt = group["rt"].mean()
             mean_rt_correct = group.loc[group["correct"], "rt"].mean()
@@ -91,6 +133,18 @@ def compute_phase_metrics(df):
 
 # parse the data
 def parse_raw_experiment_data(raw_data):
+    """
+    Parse raw JSON-formatted experiment data into a structured pandas DataFrame with enriched trial-level information.
+    :param raw_data: list[str] - List of JSON strings, each representing a participant’s experiment data.
+    :return: pandas.DataFrame - DataFrame containing one row per trial, including:
+                - participant_id: str - Identifier for the participant (default 'unknown' if missing).
+                - n_trials: int - Total number of trials for the participant.
+                - correct: bool - Whether the trial response was correct.
+                - rt: float - Reaction time for the trial.
+                - accuracy: float - Participant-level mean accuracy across trials.
+                - mean_rt: float - Participant-level mean reaction time across trials.
+                - plus any additional fields present in the original trial data.
+    """
     all_trial_data = []
 
     for item in raw_data:
@@ -164,13 +218,31 @@ def get_affective_stroop_firebase_runner(firebase_credentials_path: str="firebas
             ]
         )
     elif preprocessing == "raw":
-        #TODO AHHHHHHHHHHHHHHHHHHHHHHHH
         raise NotImplementedError("Raw data variable collection not implemented yet.")
     else:
         raise ValueError(f"Preprocessing {preprocessing} not recognized. Use either 'raw' or 'phase_summary'.")
 
 
     def experiment_runner(conditions):
+        """
+        Run an experiment for the given conditions, collect trial-level data, and optionally compute phase-level summaries.
+        :param conditions: pandas.DataFrame - DataFrame specifying the experimental conditions for each participant/sequence,
+                        must include a 'length' column indicating the number of trials per condition.
+        :return: tuple[callable, VariableCollection, dict] - A tuple containing:
+                    (1) experiment_runner: a function that executes the experiment and returns either raw or phase-level data,
+                    (2) variables: VariableCollection object describing independent and dependent variables,
+                    (3) info: dict containing metadata such as the generated equation, constants, and constant values.
+        
+        The experiment_runner function, when called, performs the following steps:
+        1. Generates trial sequences for each condition.
+        2. Sends conditions to the experiment platform (e.g., Firebase) and collects raw trial data.
+        3. Parses raw data into a structured pandas DataFrame using parse_raw_experiment_data.
+        4. Computes phase-level metrics using compute_phase_metrics.
+        5. Returns either the raw trial DataFrame or the phase-level summary depending on the `preprocessing` argument:
+            - 'raw': returns the full trial-level DataFrame and saves it as 'results.csv'.
+            - 'phase_summary': returns a summary DataFrame with metrics per phase (accuracy, mean_rt, n_trials).
+        :raises ValueError: If the `preprocessing` argument is not recognized.
+        """
         js_codes = []
         for _, row in conditions.iterrows():
             length = int(row["length"])
