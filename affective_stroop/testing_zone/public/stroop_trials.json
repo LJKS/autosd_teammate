@@ -1,37 +1,355 @@
 [
   {
-    "color": "yellow",
-    "word": "hat",
+    "color": "blue",
+    "word": "clock",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "paper",
     "valence": "neutral",
     "phase": "neutral1"
   },
   {
     "color": "green",
-    "word": "door",
-    "valence": "neutral",
-    "phase": "neutral1"
-  },
-  {
-    "color": "green",
-    "word": "book",
+    "word": "paper",
     "valence": "neutral",
     "phase": "neutral1"
   },
   {
     "color": "red",
+    "word": "door",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "phone",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "road",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
     "word": "pen",
     "valence": "neutral",
     "phase": "neutral1"
   },
   {
     "color": "red",
-    "word": "lamp",
+    "word": "cup",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "shirt",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "shoe",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "shoe",
     "valence": "neutral",
     "phase": "neutral1"
   },
   {
     "color": "green",
+    "word": "table",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "hat",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "shoe",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "road",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "bottle",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "shoe",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "tree",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "road",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "paper",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "phone",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "shirt",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "window",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "blue",
+    "word": "lamp",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "shirt",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "chair",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "tree",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "paper",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "cup",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "yellow",
+    "word": "door",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "green",
+    "word": "pen",
+    "valence": "neutral",
+    "phase": "neutral1"
+  },
+  {
+    "color": "red",
+    "word": "terror",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "trauma",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "cry",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "pain",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "stress",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "loss",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "loss",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "trauma",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "loss",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "death",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "anger",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "blood",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "anger",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "grief",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "blood",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "pain",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "danger",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "terror",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "terror",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "hurt",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "trauma",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "stress",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "stress",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
     "word": "murder",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "fear",
     "valence": "emotional",
     "phase": "emotional"
   },
@@ -43,21 +361,183 @@
   },
   {
     "color": "green",
-    "word": "blood",
+    "word": "hate",
     "valence": "emotional",
     "phase": "emotional"
   },
   {
-    "color": "red",
-    "word": "abuse",
+    "color": "yellow",
+    "word": "loss",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "green",
+    "word": "suffer",
     "valence": "emotional",
     "phase": "emotional"
   },
   {
     "color": "blue",
-    "word": "blood",
+    "word": "death",
     "valence": "emotional",
     "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "hate",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "trauma",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "blue",
+    "word": "death",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "yellow",
+    "word": "rage",
+    "valence": "emotional",
+    "phase": "emotional"
+  },
+  {
+    "color": "red",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "bottle",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "cup",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "pen",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "paper",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "bag",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "lamp",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "tree",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "road",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "pen",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "window",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "chair",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "road",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "bottle",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "hat",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "door",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "pen",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "shoe",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "cup",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "window",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "hat",
+    "valence": "neutral",
+    "phase": "neutral2"
   },
   {
     "color": "blue",
@@ -67,25 +547,67 @@
   },
   {
     "color": "green",
-    "word": "shirt",
+    "word": "pen",
     "valence": "neutral",
     "phase": "neutral2"
   },
   {
     "color": "red",
-    "word": "hat",
+    "word": "table",
     "valence": "neutral",
     "phase": "neutral2"
   },
   {
     "color": "yellow",
-    "word": "door",
+    "word": "paper",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "phone",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "shirt",
     "valence": "neutral",
     "phase": "neutral2"
   },
   {
     "color": "green",
-    "word": "pen",
+    "word": "book",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "window",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "blue",
+    "word": "lamp",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "red",
+    "word": "car",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "yellow",
+    "word": "clock",
+    "valence": "neutral",
+    "phase": "neutral2"
+  },
+  {
+    "color": "green",
+    "word": "door",
     "valence": "neutral",
     "phase": "neutral2"
   }
