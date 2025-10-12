@@ -36,6 +36,15 @@ def check_config(config):
         raise KeyError(f"Config is missing required key: {e}")
 
 def get_config(argparse_args):
+    """
+    Load and validate a JSON configuration file based on command-line arguments.
+    :param argparse_args: argparse.Namespace - Parsed command-line arguments containing:
+                         - config_folder: str - Path to the folder containing configuration files.
+                         - config_json: str - Name of the configuration file (without '.json' extension).
+    :return: dict - Dictionary containing the configuration parameters from the JSON file.
+    :raises FileNotFoundError: If the specified configuration file does not exist.
+    :raises KeyError: If the loaded configuration is missing a required key (as determined by check_config).
+    """
     config_folder = argparse_args.config_folder
     config_json = argparse_args.config_json
     config_path = os.path.join(config_folder, f"{config_json}.json")
@@ -51,6 +60,17 @@ def get_config(argparse_args):
 
 
 def get_experiment_runner(config):
+    """
+    Retrieve and initialize an experiment runner based on the provided configuration.
+    :param config: dict - Configuration dictionary containing an 'experiment_runner' entry with:
+                   - type: str - The type of experiment runner to use (must match a key in EXPERIMENT_RUNNERS).
+                   - kwargs: dict (optional) - Keyword arguments to pass to the experiment runner.
+    :return: tuple[callable, VariableCollection, dict] - A tuple containing:
+                (1) experiment_runner: callable function to execute the experiment,
+                (2) variables: VariableCollection object describing independent and dependent variables,
+                (3) info: dict containing metadata such as the generated equation, constants, and constant values.
+    :raises ValueError: If the experiment runner type specified in the configuration is not recognized.
+    """
     #e.g. config/test_artificial.json
     experiment_runner_config = config['experiment_runner']
     experiment_runner_type = experiment_runner_config['type']
@@ -63,6 +83,16 @@ def get_experiment_runner(config):
         raise ValueError(f"Experiment runner type {experiment_runner_type} not recognized/implemented. Please adjust config_mapping.py to include it.")
 
 def get_theorist(config):
+    """
+    Initialize a theorist model and its associated preprocessing function based on the provided configuration.
+    :param config: dict - Configuration dictionary containing a 'theorist' entry with:
+                   - model: str - The type of theorist model to use (must match a key in THEORISTS).
+                   - model_kwargs: dict (optional) - Keyword arguments to pass to the theorist model constructor.
+                   - preprocessing_function: str - Name of the preprocessing function (must match a key in THEORIST_PREPROCESSING_FUNCTIONS).
+    :return: tuple[object, callable] - A tuple containing:
+                (1) theorist: Initialized theorist model object.
+                (2) preprocessing_function: Function to preprocess data for the theorist.
+    """
     theorist_config = config['theorist']
     theorist_type = theorist_config["model"]
     theorist = THEORISTS[theorist_type]
@@ -73,6 +103,13 @@ def get_theorist(config):
     return theorist, preprocessing_function
 
 def get_save_func(config):
+    """
+    Retrieve a save function based on the provided configuration.
+    :param config: dict - Configuration dictionary containing a 'save' entry with:
+                   - type: str - The type of save function to use (must match a key in SAVE_FUNCS).
+                   - save_path: str - Path where the output should be saved.
+    :return: callable - A function that handles saving data according to the specified configuration and path.
+    """
     save_config = config['save']
     save_func_factory = SAVE_FUNCS[save_config['type']]
     save_path = config['save']['save_path']
