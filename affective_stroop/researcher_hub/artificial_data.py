@@ -29,6 +29,13 @@ def check_values_in_domain(equation, value_range):
     return True
 
 def sample_equation(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1):
+    """
+    Generate a single random symbolic equation based on the given parameters.
+    :param equation_max_depth: int - Maximum depth of the generated equation tree.
+    :param equation_num_variables: int - Number of distinct variables to include in the equation.
+    :param equation_num_constants: int - Number of distinct constants to include in the equation.
+    :return: sympy.Expr - A symbolic equation object representing the generated equation.
+    """
     equation = sample_equations(num_samples=1, max_depth=equation_max_depth, max_num_variables=equation_num_variables,
                                  max_num_constants=equation_num_constants,
                                  function_space=FUNCTION_SPACE,
@@ -36,6 +43,13 @@ def sample_equation(equation_max_depth=4,equation_num_variables=2,equation_num_c
     return equation['sympy_equations'][0]
 
 def get_vars_and_constants(equation):
+    """
+    Extract and separate variable and constant symbols from a symbolic equation.
+    :param equation: sympy.Expr - The symbolic equation from which to extract symbols.
+    :return: tuple[list[str], list[str]] - A tuple containing two lists: 
+             (1) variable names containing 'x', 
+             (2) constant names containing 'c'.
+    """
     args = list(equation.free_symbols)
     args = sorted(args, key=lambda el: el.name)
     args = [str(arg) for arg in args]
@@ -44,11 +58,24 @@ def get_vars_and_constants(equation):
     return variables, constants
 
 def generate_constant_values(constants, value_ranges=(-10,10), random_state_seed=42):
+    """
+    Generate random numeric values for a list of constant symbols within a specified range.
+    :param constants: list[str] - Names of constants for which to generate values.
+    :param value_ranges: tuple[float, float] - Lower and upper bounds for the random values (default: (-10, 10)).
+    :param random_state_seed: int - Seed for the random number generator to ensure reproducibility (default: 42).
+    :return: dict[str, float] - A dictionary mapping each constant name to a randomly generated value.
+    """
     random_gen = np.random.default_rng(random_state_seed)
     constant_values = {const: random_gen.uniform(value_ranges[0], value_ranges[1]) for const in constants}
     return constant_values
 
 def equation_with_concrete_constants(equation, constant_values):
+    """
+    Substitute numeric values for constants in a symbolic equation.
+    :param equation: sympy.Expr - The symbolic equation containing constant symbols.
+    :param constant_values: dict[str, float] - A mapping of constant names to their numeric values.
+    :return: sympy.Expr - The equation with the specified constants replaced by their numeric values.
+    """
     if len(constant_values) > 0:
         free_symbols = list(equation.free_symbols)
         symbol_values = {f_sym: constant_values[str(f_sym)] for f_sym in free_symbols if str(f_sym) in list(constant_values.keys())}
@@ -59,6 +86,26 @@ def equation_with_concrete_constants(equation, constant_values):
 
 def get_artificial_experiment_runner(equation_max_depth=4,equation_num_variables=2,equation_num_constants=1, value_ranges=(-10,10), num_values=100, random_state_seed=42,
                                      generate_max_attempts=100, constant_gen=generate_constant_values):
+    """
+    Create an artificial experiment setup using a randomly generated symbolic equation.
+    :param equation_max_depth: int - Maximum depth of the generated equation tree (default: 4).
+    :param equation_num_variables: int - Number of distinct variables in the equation (default: 2).
+    :param equation_num_constants: int - Number of distinct constants in the equation (default: 1).
+    :param value_ranges: tuple[float, float] - Range of values for variables and constants (default: (-10, 10)).
+    :param num_values: int - Number of discrete values to sample for each independent variable (default: 100).
+    :param random_state_seed: int - Seed for the random number generator to ensure reproducibility (default: 42).
+    :param generate_max_attempts: int - Maximum number of attempts to generate a valid equation (default: 100).
+    :param constant_gen: callable - Function used to generate constant values (default: generate_constant_values).
+    :return: tuple[
+                equation_experiment, 
+                VariableCollection, 
+                dict[str, Any]
+             ] - A tuple containing:
+                (1) the generated experiment object,
+                (2) the variable collection (independent and dependent variables),
+                (3) a dictionary with metadata including the equation, constants, and their numeric values.
+    :raises ValueError: If no valid equation can be generated within the specified number of attempts.
+    """
     for attempt in range(generate_max_attempts):
         equation = sample_equation(equation_max_depth,equation_num_variables,equation_num_constants)
         print('Trying equation:', equation)
