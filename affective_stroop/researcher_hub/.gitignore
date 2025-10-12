@@ -1,0 +1,4 @@
+firebase_credentials.json
+.venv
+results/
+__pycache__/
