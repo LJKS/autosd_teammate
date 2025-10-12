@@ -4,6 +4,14 @@ import os
 import time
 
 def save_this_cycle(config, step):
+    """
+    Determine whether the current workflow step should trigger saving results based on configuration.
+    :param config: dict - Configuration dictionary containing:
+                   - save: dict with 'save_every' specifying the interval of steps to save.
+                   - general: dict with 'cycles' specifying the total number of workflow cycles.
+    :param step: int - Current step or cycle number in the workflow.
+    :return: bool - True if results should be saved on this step, False otherwise.
+    """
     save_every = config['save']['save_every']
     max_steps = config['general']['cycles']
     if step % save_every == 0 or step == max_steps:
